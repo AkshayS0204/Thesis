@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""
+Data Cleaning Script for ARGUS Data
+"""
+
+import json
+import pandas as pd
+
+# ============================================================================
+# FILL IN YOUR FILE PATH HERE
+# ============================================================================
+
+INPUT_FILES = [
+    r"C:\Users\aksha\Desktop\ARGUS-master\ARGUS-master\items\ARGUS\dualspider\VW500file1.jl",
+    r"C:\Users\aksha\Desktop\ARGUS-master\ARGUS-master\items\ARGUS\dualspider\VW500file2.jl"
+    ]
+
+OUTPUT_FILE = r"C:\Users\aksha\Desktop\cleaned_links.csv"
+
+# ============================================================================
+# NOISE FILTERS
+# ============================================================================
+
+NOISE_DOMAINS = {
+    # Social media
+    'facebook.com', 'instagram.com', 'twitter.com', 'linkedin.com', 
+    'youtube.com', 'tiktok.com', 'snapchat.com', 'pinterest.com',
+    
+    # Payment & e-commerce
+    'klarna.com', 'paypal.com', 'ideal.nl', 'amazon.com', 'amazon.de',
+    'alibaba.com', 'ebay.com', 'bol.com', 'coolblue.nl', 'mediamarkt.nl',
+    
+    # Generic tech services
+    'google.com', 'apple.com', 'microsoft.com', 'dropbox.com', 
+    'github.com', 'gitlab.com', 'aws.amazon.com',
+    
+    # Generic web services
+    'trustpilot.com', 'glassdoor.com', 'indeed.com', 'wikipedia.org',
+}
+
+# ============================================================================
+# MAIN CODE
+# ============================================================================
+
+print("=" * 70)
+print("ARGUS DATA CLEANING")
+print("=" * 70)
+
+# Load data
+print("\nLoading data...")
+all_links = []
+company = []
+
+for input_file in INPUT_FILES:
+    file_link_count = 0 
+    file_company = 'Uknown'
+    try:
+        with open(input_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                    links = data.get('links', [])
+                    all_links.extend(links)
+                    file_link_count+= len(links)
+                    if file_company == 'Uknown':
+                        start_page_list = data.get('start_page', [])
+                        if start_page_list:
+                            file_company = start_page_list[0]
+                        else:
+                            start_domain_list = data.get ('start_domain', [])
+                            dl_slot_list = data.get('dl_slot', [])
+                            if start_domain_list:
+                                file_company = start_domain_list[0]
+                            elif dl_slot_list:
+                                file_company = dl_slot_list[0]
+                            else:
+                                file_company = f"Unknown (file: {input_file})"
+                except:
+                    continue
+    except FileNotFoundError:
+        print("ERROR: File not found: {input_file}")
+        print("\nMake sure to update INPUT_FILE with your actual file path")
+        exit()
+
+    print(f"✓ Loaded {len(all_links)} total links")
+    print(f"✓ Company: {file_company}")
+
+# Filter
+print("\nFiltering noise...")
+cleaned_links = []
+unique_domains = set()
+
+for link in all_links:
+    if not link or link.strip() == '':
+        continue
+    
+    link = link.lower().strip()
+    
+    # Check if noise
+    is_noise = any(noise in link for noise in NOISE_DOMAINS)
+    if is_noise:
+        continue
+    
+    # Skip duplicates
+    if link in unique_domains:
+        continue
+    
+    unique_domains.add(link)
+    cleaned_links.append(link)
+
+print(f"✓ Filtered out noise")
+print(f"✓ Removed duplicates")
+print(f"✓ Kept {len(cleaned_links)} unique links")
+
+# Classify geographically
+print("\nClassifying links...")
+results = []
+
+for link in cleaned_links:
+    # Guess geography
+    if 'eindhoven' in link or 'veldhoven' in link:
+        geo = 'Local (NL)'
+    elif 'wolfsburg' in link:
+        geo = 'Local (DE)'
+    elif link.endswith('.nl'):
+        geo = 'Domestic (NL)'
+    elif link.endswith('.de'):
+        geo = 'Domestic (DE)'
+    else:
+        geo = 'International'
+    
+    results.append({'domain': link, 'geography': geo})
+
+df = pd.DataFrame(results)
+
+# Show stats
+print("\n" + "=" * 70)
+print("RESULTS")
+print("=" * 70)
+print(f"\nTotal cleaned links: {len(df)}")
+print(f"\nGeographic breakdown:")
+for geo, count in df['geography'].value_counts().items():
+    pct = round(100 * count / len(df), 1)
+    print(f"  {geo}: {count} ({pct}%)")
+
+# Save
+print(f"\nSaving to {OUTPUT_FILE}...")
+df.to_csv(OUTPUT_FILE, index=False)
+print("✓ DONE!")
+print(f"\nOpen this file in Excel: {OUTPUT_FILE}")
