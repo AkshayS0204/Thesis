@@ -64,7 +64,8 @@ Run `python clean_argus_links.py --help` to see all options.
 |------|-------------|
 | `clean_code.py` | Cleaning and geographic classification script (above). |
 | `VW100file1 & VW100file2` | Output of ARGUS of 100 pages scraped for Volkswagen |
-| `*_cleaned_links.csv` | Cleaned output for each company / crawl size. |
+| `ASML100file1 & ASML100file2` | Output of ARGUS of 100 pages scraped for ASML |
+| `cleaned_links.csv` | Cleaned output for each company / crawl size. |
 
 ## Reproducibility 
 
