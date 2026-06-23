@@ -15,7 +15,7 @@ INPUT_FILES = [
     VW100file2.jl"
     ]
 
-OUTPUT_FILE = r"C:\Users\aksha\Desktop\cleaned_links.csv"
+OUTPUT_FILE = *cleaned_links.csv
 
 # ============================================================================
 # NOISE FILTERS
