@@ -11,8 +11,8 @@ import pandas as pd
 # ============================================================================
 
 INPUT_FILES = [
-    r"C:\Users\aksha\Desktop\ARGUS-master\ARGUS-master\items\ARGUS\dualspider\VW500file1.jl",
-    r"C:\Users\aksha\Desktop\ARGUS-master\ARGUS-master\items\ARGUS\dualspider\VW500file2.jl"
+    VW100file1.jl,
+    VW100file2.jl"
     ]
 
 OUTPUT_FILE = r"C:\Users\aksha\Desktop\cleaned_links.csv"
