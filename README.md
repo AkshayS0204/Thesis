@@ -42,7 +42,7 @@ see its repository for installation and usage: https://github.com/JanKinne/ARGUS
 2. Run the cleaning script, pointing it at those files:
 
    ```
-   python clean_argus_links.py --input file1.jl file2.jl --output cleaned_links.csv
+   python cleaned_links.py --input file1.jl file2.jl --output cleaned_links.csv
    ```
 
    For example, to reproduce the Volkswagen 500-page crawl:
