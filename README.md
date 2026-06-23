@@ -13,7 +13,7 @@ produces a clean list of meaningful outgoing hyperlinks. Specifically, it:
 
 1. **Reads** one or more ARGUS `dualspider` output files (`.jl` / JSON-lines format).
 2. **Extracts** all outgoing hyperlinks from the crawled pages.
-3. **Removes noise** — generic platforms that nearly every firm links to (social
+3. **Removes noise** generic platforms that nearly every firm links to (social
    media, payment/e-commerce services, generic tech and web services). The full
    list is in the `NOISE_DOMAINS` set at the top of the script.
 4. **Removes duplicates** so each domain is counted once.
@@ -31,8 +31,6 @@ The cleaned CSV files for each company and crawl size (e.g.
   ```
   pip install pandas
   ```
-- `json`, `argparse`, and `os` are part of the Python standard library (no install
-  needed).
 
 To produce the raw `.jl` input files in the first place, you also need ARGUS itself;
 see its repository for installation and usage: https://github.com/JanKinne/ARGUS
@@ -51,8 +49,8 @@ see its repository for installation and usage: https://github.com/JanKinne/ARGUS
 
    ```
    python clean_argus_links.py \
-       --input VW500file1.jl VW500file2.jl \
-       --output VW500_cleaned_links.csv
+       --input VW100file1.jl VW100file2.jl \
+       --output VW100_cleaned_links.csv
    ```
 
 3. The script prints a summary (total links kept and the geographic breakdown) and
@@ -65,8 +63,15 @@ Run `python clean_argus_links.py --help` to see all options.
 | File | Description |
 |------|-------------|
 | `clean_code.py` | Cleaning and geographic classification script (above). |
+| `VW100file1 & VW100file2` | Output of ARGUS of 100 pages scraped for Volkswagen |
 | `*_cleaned_links.csv` | Cleaned output for each company / crawl size. |
 
+## Reproducibility 
+
+In the repository are the output I got from scraping 100 webpages from ARGUS  for www.volkswagen.com and www.volkswagen.de and the sites www.asml.nl and www.asml.com
+The output I got from ARGUS are called VW100file1 & VWF100file2 for Volkswagen and for ASML are ASML100file1 & ASML100file2
+I also uploaded the output of my code called VW100_cleaned_links and ASML100_cleaned_links
+I did not upload the files for 250 and 500 pages crawled because those where too large
 
 ## Use of AI tools
 
